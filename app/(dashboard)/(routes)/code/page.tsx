@@ -96,7 +96,7 @@ const CodePage = () => {
                                                     focus-visible-ring-transparent                                                    
                                                     "
                                                 disabled={isLoading}
-                                                placeholder="Write python code to calculate median of stream"
+                                                placeholder="Write python code to calculate median of a stream of data"
                                                 {...field}
                                             />
                                         </FormControl>
