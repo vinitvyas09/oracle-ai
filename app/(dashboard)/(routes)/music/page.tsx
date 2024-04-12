@@ -3,7 +3,7 @@
 import * as z from "zod";
 import axios from "axios";
 import { Heading } from "@/components/heading";
-import { MessageSquare } from "lucide-react";
+import { Music } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { formSchema } from "./constants";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,16 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
-import { cn } from "@/lib/utils";
-import { UserAvatar } from "@/components/user-avatar";
-import { BotAvatar } from "@/components/bot-avatar";
 
-const ConversationPage = () => {
+const MusicPage = () => {
     const router = useRouter();
-    const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
+    const [music, setMusic] = useState<string>();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -32,25 +28,25 @@ const ConversationPage = () => {
     const isLoading = form.formState.isSubmitting;
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        try 
-        {
-            const userMessage: ChatCompletionMessageParam = {
-                role: "user",
-                content: values.prompt,
-            };
-            const newMessages = [...messages, userMessage];
-            const response = await axios.post("/api/conversation", { messages: newMessages });
-            setMessages((current) => [...current, userMessage, response.data]);
+        try {
+            setMusic(undefined); // Clear previous music first
+    
+            const response = await axios.post("/api/music", values);
+            console.log("Received music URL:", response);
 
-            form.reset()
-        }
-        catch (error: any) 
-        {
+            if (response.data) {
+                setMusic(response.data);
+            } else {
+                console.error('No audio URL in response:', response.data);
+            }
+
+            form.reset();
+        } catch (error: any) {
             // Open Pro Model for paid subscribers
-            console.log(error)
-        }
-        finally 
-        {
+            // console.log(error)
+            console.error("Error submitting form:", error);
+        } finally {
+            // Commenting this out to see if it affects the behavior
             router.refresh();
         }
     };
@@ -58,11 +54,11 @@ const ConversationPage = () => {
     return(
         <div>
             <Heading 
-                title="Conversation"
-                description="Get the best output from different LLMs"
-                icon={MessageSquare}
-                iconColor="text-violet-500"
-                bgColor="text-violet-500/10"
+                title="Music Generation"
+                description="No practice, no skill: no problem"
+                icon={Music}
+                iconColor="text-emerald-500"
+                bgColor="text-emerald-500/10"
             />
             <div className="px-4 lg:px-8">
                 <div>
@@ -95,7 +91,7 @@ const ConversationPage = () => {
                                                     focus-visible-ring-transparent                                                    
                                                     "
                                                 disabled={isLoading}
-                                                placeholder="How did the dinosaurs go extinct?"
+                                                placeholder="A guitar solo like that in November Rain"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -107,6 +103,10 @@ const ConversationPage = () => {
                                 Generate
                             </Button>
 
+                            <p className="col-span-12 text-center text-sm text-gray-600">
+                                Note: Processing may take around 1 minute.
+                            </p>
+
                         </form>
                     </Form>
                 </div>
@@ -116,38 +116,22 @@ const ConversationPage = () => {
                             <Loader />
                         </div>
                     )}
-                    {messages.length === 0 && !isLoading && (
-                        <Empty label="No Conversation Started :(" />
+
+                    {!music && !isLoading && (
+                        <Empty label="No music prompt given :(" />
                     )}
-                    <div className="flex flex-col-reverse gap-y-4">
-                        {messages.map((message, index) => (
-                        <div 
-                            key={index}
-                            className={cn("p-8 w-full flex items-start gap-x-8 rounded-lg",
-                            message.role === "user" ? "bg-white-border border-black/10" :
-                            "bg-muted"
-                            )}
-                        >
-                            {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                            <p className="text-sm">
-                                {Array.isArray(message.content)
-                                ? message.content.map((part, partIndex) => {
-                                    if ("text" in part) {
-                                    return <span key={partIndex}>{part.text}</span>;
-                                    } else {
-                                    // Handle 'ChatCompletionContentPartImage' case here
-                                    return null;
-                                    }
-                                })
-                                : message.content}
-                            </p>
-                        </div>
-                    ))}
-                    </div>
+
+                    {music && (
+                        <audio controls autoPlay className="w-full mt-8">
+                            <source src={music} type="audio/mp3" />
+                            Your browser does not support the audio element.
+                        </audio>
+                    )}
+
                 </div>
             </div>
         </div>
     );
 }
 
-export default ConversationPage;
+export default MusicPage;
