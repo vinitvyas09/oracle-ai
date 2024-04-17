@@ -14,8 +14,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
+import { useProModel } from "@/hooks/use-pro-model";
 
 const VideoPage = () => {
+    const proModel = useProModel();
     const router = useRouter();
     const [video, setVideo] = useState<string>();
     const form = useForm<z.infer<typeof formSchema>>({
@@ -41,12 +43,13 @@ const VideoPage = () => {
             }
 
             form.reset();
-        } catch (error: any) {
-            // Open Pro Model for paid subscribers
-            // console.log(error)
-            console.error("Error submitting form:", error);
+        } catch (error: any) 
+        {
+            if(error?.response?.status === 403) {
+                proModel.onOpen();
+            }
+            // console.error("Error submitting form:", error);
         } finally {
-            // Commenting this out to see if it affects the behavior
             router.refresh();
         }
     };

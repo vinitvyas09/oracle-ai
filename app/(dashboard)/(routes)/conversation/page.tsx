@@ -18,8 +18,10 @@ import { Loader } from "@/components/loader";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
+import { useProModel } from "@/hooks/use-pro-model";
 
 const ConversationPage = () => {
+    const proModel = useProModel();
     const router = useRouter();
     const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
     const form = useForm<z.infer<typeof formSchema>>({
@@ -46,8 +48,9 @@ const ConversationPage = () => {
         }
         catch (error: any) 
         {
-            // Open Pro Model for paid subscribers
-            console.log(error)
+            if(error?.response?.status === 403) {
+                proModel.onOpen();
+            }
         }
         finally 
         {
