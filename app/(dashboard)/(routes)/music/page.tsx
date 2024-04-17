@@ -14,8 +14,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
+import { useProModel } from "@/hooks/use-pro-model";
 
 const MusicPage = () => {
+    const proModel = useProModel();
     const router = useRouter();
     const [music, setMusic] = useState<string>();
     const form = useForm<z.infer<typeof formSchema>>({
@@ -41,12 +43,14 @@ const MusicPage = () => {
             }
 
             form.reset();
-        } catch (error: any) {
-            // Open Pro Model for paid subscribers
+        } catch (error: any) 
+        {
+            if(error?.response?.status === 403) {
+                proModel.onOpen();
+            }
             // console.log(error)
-            console.error("Error submitting form:", error);
+            // console.error("Error submitting form:", error);
         } finally {
-            // Commenting this out to see if it affects the behavior
             router.refresh();
         }
     };

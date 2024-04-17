@@ -18,8 +18,10 @@ import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
+import { useProModel } from "@/hooks/use-pro-model";
 
 const ImagePage = () => {
+    const proModel = useProModel();
     const router = useRouter();
     const [images, setimages] = useState<string[]>([]);
     
@@ -48,8 +50,9 @@ const ImagePage = () => {
         }
         catch (error: any) 
         {
-            // Open Pro Model for paid subscribers
-            console.log(error)
+            if(error?.response?.status === 403) {
+                proModel.onOpen();
+            }
         }
         finally 
         {
