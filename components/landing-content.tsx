@@ -4,12 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const testimonials = [
     {
-        name: "L. da Vinci",
-        avatar: "L",
-        title: "Polymath",
-        description: "With this tool, I sketched designs for a new machine—only using words! It’s almost like having an apprentice who reads my mind. A true renaissance on the web."
-    },
-    {
         name: "Marco P.",
         avatar: "M",
         title: "Explorer",
@@ -20,12 +14,6 @@ const testimonials = [
         avatar: "V",
         title: "Painter",
         description: "If only I had this site back then, I could have painted 'Starry Night' during the day"
-    },
-    {
-        name: "J. Austen",
-        avatar: "J",
-        title: "Novelist",
-        description: "Creating music that sounds like it leapt right out of a ballroom scene in one of my novels? Absolutely delightful."
     },
     {
         name: "C.",
