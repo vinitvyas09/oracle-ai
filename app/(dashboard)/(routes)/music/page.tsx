@@ -15,6 +15,7 @@ import { useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { useProModel } from "@/hooks/use-pro-model";
+import toast from "react-hot-toast";
 
 const MusicPage = () => {
     const proModel = useProModel();
@@ -47,6 +48,9 @@ const MusicPage = () => {
         {
             if(error?.response?.status === 403) {
                 proModel.onOpen();
+            }
+            else {
+                toast.error("Something went wrong")
             }
             // console.log(error)
             // console.error("Error submitting form:", error);
