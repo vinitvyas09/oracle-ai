@@ -150,7 +150,8 @@ const CodePage = () => {
                                 }}
                                 className={"text-sm overflow-hidden leading-7"}
                             >
-                                {message.content || ""}
+                                {typeof message.content === 'string' ? message.content :
+                                 Array.isArray(message.content) ? message.content.map(part => part).join(' ') : ""}
                             </ReactMarkdown>
                         </div>
                     ))}
