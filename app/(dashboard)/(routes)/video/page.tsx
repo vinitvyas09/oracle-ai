@@ -111,7 +111,7 @@ const VideoPage = () => {
                             </Button>
 
                             <p className="col-span-12 text-center text-sm text-gray-600">
-                                Note: Processing may take around 2 minutes.
+                                Note: Backend zeroscope model has a bug and processing may take around 4 minutes.
                             </p>
 
                         </form>
